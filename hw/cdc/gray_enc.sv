@@ -1,6 +1,8 @@
 `timescale 1ns/1ps // <time unit>/<time precision>
 // ==> #1 ==> delay of 1 ns with calcs closest to nearest ps
 
+// encodes binary to graycode (increments only lead to a single bit change, lower chance for error)
+
 module gray_enc #(
     parameter int WIDTH = 1
 )(

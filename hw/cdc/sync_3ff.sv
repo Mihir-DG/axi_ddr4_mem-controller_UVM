@@ -1,10 +1,12 @@
 
 `timescale 1ns/1ps
 
+// ripple synchronizer to transfer data between 2 separate clock domains
+
 module sync_3ff #(
     parameter int WIDTH = 1
 )(
-    input logic clk,
+    input logic clk, // destination clock domain
     input logic rst_n,
     input logic[WIDTH-1:0] async_d,
     output logic [WIDTH-1:0] sync_q

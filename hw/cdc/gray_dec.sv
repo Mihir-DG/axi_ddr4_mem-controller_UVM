@@ -1,5 +1,7 @@
 `timescale 1ns/1ps
 
+// decodes graycode to binary
+
 module gray_dec #(
     parameter int WIDTH = 1
 )(

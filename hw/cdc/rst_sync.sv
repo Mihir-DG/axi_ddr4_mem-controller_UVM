@@ -1,5 +1,7 @@
 `timescale 1ns/1ps
 
+// syncs async reset signal to a separate reset function that maps to the full system's clock domain.
+
 module rst_sync(
     input async_rst_n,
     input clk, // destination clock domain
