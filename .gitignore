@@ -1,0 +1,14 @@
+# Verilator outputs
+obj_dir/
+*.mk
+*.d
+
+# Waveform files
+*.vcd
+*.fst
+
+# SymbiYosys/formal outputs
+*.work/
+formal/gray_enc/
+
+proj_structure.txt
