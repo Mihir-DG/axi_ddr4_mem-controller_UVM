@@ -1,0 +1,105 @@
+(just notes i made to keep track of me learning verilator lol)
+
+-cc converts to C++
+-sc converts to SystemC
+
+.mk -> used with Make to build simulation executable
+.h & .cpp --> C++ and implementation sources
+
+<DUT>.h --> primary design header --> instantiated in C+++ testbench as DUT
+<DUT___024root.h> --> internal header; contains operation_t type definition.
+
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+INTRO SIMULATION FLOW
+#include <stdlib.h>
+#include <iostream>
+#include <verilated.h>
+#include <verilated_vcd_c.h>
+#include "obj_dir/Vrst_sync.h"
+#include "obj_dir/Vrst_sync___024root.h"
+
+#define MAX_SIM_TIME 20
+vluint64_t sim_time = 0; //used to track when to finish the simulation
+
+int main(int argc, char** argv, char** env) {
+
+    Vrst_sync *dut = new Vrst_sync; // instantiation;
+    // system verilog equivalent --> alu dut(.*);
+
+    //setting up waveform dumping
+    Verilated::traceEverOn(true);
+    VerilatedVcdC *m_trace = new VerilatedVcdC;
+    dut->trace(m_trace, 5);
+    m_trace->open("rst_sync_waveform.vcd");
+
+    // SIMULATION MEAT AND BONES RAHHHHH
+    while (sim_time < MAX_SIM_TIME){
+        dut->clk ^= 1; // inverts clock
+        dut->eval(); // evalulates all signals module
+        m_trace->dump(sim_time); // dumps traced signal values into waveform dump file
+        // model is currently only evaluated at clock edges
+        sim_time ++; // increment sim time
+    }
+
+    m_trace->close();
+    delete dut;
+    exit(EXIT_SUCCESS);
+}
+
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+RUNNING A VERILATOR SIMULATION
+https://www.itsembedded.com/dhd/verilator_1/
+
+$ verilator --Wall --trace --cc rst_sync.sv --exe tb_rst_sync.cpp
+- (regenerates .mk files to include cpp test bench (with --exe tb_rst_sync.cpp))
+- (--Wall turns on all C++ warnings)
+- (--trace enables waveform tracing)
+
+$ make -C obj_dir -f Vrst_sync.mk Vrst_sync
+- builds the executable
+- (-C obj_dir tells make to work in obj_dir)
+- (then pass required makefile with -f Vrst_sync.mk)
+- (tell make to build the target Vrst_sync -- name of compiled tb executable)
+- if successful, there should be a Vrst_sync binary in obj_dir
+
+$ ./obj_dir/Vrst_sync --> running the executable
+- if successful, should create waveform.vcd
+
+$ gtkwave waveform.vcd
+- step 1: click on TOP
+- step 2: click on a signal and ctrl+A
+- step 3: click on append
+- step 4: inspect waveforms
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+https://www.itsembedded.com/dhd/verilator_2/
+BASICS OF SYSTEMVERILOG VERIFICATION USING C++
