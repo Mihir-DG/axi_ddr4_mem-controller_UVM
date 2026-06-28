@@ -11,7 +11,6 @@ module rst_sync(
     // tells synthesizer to place these regs together to minimize prop delay
     (* ASYNC_REG = "TRUE" *) logic q1;
     (* ASYNC_REG = "TRUE" *) logic q2;
-    (* ASYNC_REG = "TRUE" *) logic q3;
 
     always_ff @(posedge clk or negedge async_rst_n) begin
         
@@ -20,7 +19,6 @@ module rst_sync(
             // if reset asserted
             q1 <= '0;
             q2 <= '0;
-            q3 <= '0;
         
         end
 
@@ -29,12 +27,11 @@ module rst_sync(
             // default functioning, rippling high sync_rst_n through 2 FFs for sync
             q1 <= '1;
             q2 <= q1;
-            q3 <= q2;
 
         end
 
     end
 
-    assign sync_rst_n = q3;    
+    assign sync_rst_n = q2;    
 
 endmodule

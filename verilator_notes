@@ -155,3 +155,8 @@ Line 21 in our Makefile to:
 
 @./obj_dir/V$(MODULE) +verilator+rand+reset+2
 NOTE -- this only affects internal state elements
+*
+*
+*
+accessing internal registers/ffs:
+dut->rootp->
