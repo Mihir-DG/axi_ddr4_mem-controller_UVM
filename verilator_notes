@@ -3,6 +3,10 @@
 -cc converts to C++
 -sc converts to SystemC
 
+
+2 state --> no X, Z --> only 0 and 1
+verilator defaults all signals to 0 by default, and changes any Xs/Zs to 0.
+
 .mk -> used with Make to build simulation executable
 .h & .cpp --> C++ and implementation sources
 
@@ -102,4 +106,52 @@ $ gtkwave waveform.vcd
 *
 *
 https://www.itsembedded.com/dhd/verilator_2/
-BASICS OF SYSTEMVERILOG VERIFICATION USING C++
+ALTERNATIVE RUN SEQUENCE WITH MAKEFILE
+
+$ make sim --> rebuild entire sim
+$ make waves --> open GTKWAVE
+$ make build --> rebuild verilated sources
+$ make verilate --> rerun verilate cmd
+$ make clean --> cleans out obj_dir, waveform file, .stamp.*
+
+(change MODULE=rst_sync to DUT name in all cases)
+
+TO RUN: 
+$ make clean
+$ make sim
+$ make waves
+
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+MAKING RANDOMIZED INITIAL VALUES
+
+To make our testbench initialize signals to random values, we 
+first need to call Verilated::commandArgs(argc, argv); before
+creating the DUT object:
+
+int main(int argc, char** argv, char** env) {
+    Verilated::commandArgs(argc, argv);
+    Valu *dut = new Valu;
+
+Then, we need to update our verilation target build command 
+by adding --x-assign unique and --x-initial unique. Line 31 
+of our Makefile should now therefore look like this:
+
+verilator -Wall --trace --x-assign unique --x-initial unique -cc $(MODULE).sv --exe tb_$(MODULE).cpp
+
+Lastly, we need to pass +verilator+rand+reset+2 to our 
+simulation executable, to set set the runtime signal 
+initialization technique to random. This means changing the 
+Line 21 in our Makefile to:
+
+@./obj_dir/V$(MODULE) +verilator+rand+reset+2
+NOTE -- this only affects internal state elements
